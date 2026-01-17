@@ -275,7 +275,7 @@ await message.channel.send(embed=embed)
 
 
     # Envoyer la commande dans #commandes
-    orders_channel = await get_orders_channel(message.guild)
+ orders_channel = await get_orders_channel(message.guild)
     if orders_channel:
         await orders_channel.send(
             f"🧾 **Commande** de {message.author.mention} dans {message.channel.mention} : "
@@ -309,3 +309,4 @@ if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("DISCORD_TOKEN manquant. Mets-le dans .env")
     bot.run(TOKEN)
+
