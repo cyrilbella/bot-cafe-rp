@@ -264,14 +264,18 @@ async def on_message(message: discord.Message):
         f"💰 Total: **{total_price}💰** — Il te reste **{new_balance}💰**."
     )
 
-    embed = discord.Embed(
-    description=rp,
-    color=0xC49A6C  # couleur café ☕
-)
+    await message.channel.send(rp)
 
-embed.set_image(url=random.choice(BARISTA_IMAGES))
+    # Envoyer la commande dans #commandes
+    orders_channel = await get_orders_channel(message.guild)
+    if orders_channel:
+        await orders_channel.send(
+            f"🧾 **Commande** de {message.author.mention} dans {message.channel.mention} : "
+            + " | ".join(parts)
+            + (f" | Total: **{total_price}💰**" if total_price > 0 else "")
+        )
 
-await message.channel.send(embed=embed)
+    await bot.process_commands(message)
 
 
     # Envoyer la commande dans #commandes
@@ -309,5 +313,6 @@ if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("DISCORD_TOKEN manquant. Mets-le dans .env")
     bot.run(TOKEN)
+
 
 
