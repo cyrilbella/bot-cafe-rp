@@ -19,6 +19,13 @@ ALLOWED_CHANNELS = {"🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"}  # exem
 # Salon où le bot envoie les commandes
 ORDERS_CHANNEL_NAME = "🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"
 
+BARISTA_IMAGES = [
+    "https://cdn.discordapp.com/attachments/1461778523793527014/1462055474676502704/download_5.jpg?ex=696cccc4&is=696b7b44&hm=55ae1440a27d5d5c33066769d21064d17573b3837da2e7771d0b1515ec140ef8&",
+    "https://cdn.discordapp.com/attachments/1461778523793527014/1462055475188334777/Im_not_going_to_greet_you_every_day..._but_since_youre_here_welcome__Dont_think_I_made_this_coffee_just_for_you_got_it____art_by_mikitkafull___art_oc_tsundere_barista_animeart_digitalart_character.jpg?ex=696cccc4&is=696b7b44&hm=366f1c4e0451b4fca8a6a47a5151eb078f1074b26808757badb93ce2a770c5e6&",
+    "https://media.discordapp.net/attachments/1461778523793527014/1462055475968213149/download_4.jpg?ex=696cccc5&is=696b7b45&hm=45b90b11598c2fc760a9c7a0c8881c9318b645319910f2b8a1510438c508f1d2&=&format=webp&width=655&height=902",
+]
+
+
 # ---------- SYSTEME ARGENT RP ----------
 MONEY_FILE = "money.json"
 START_MONEY = 20  # argent de départ
@@ -257,7 +264,15 @@ async def on_message(message: discord.Message):
         f"💰 Total: **{total_price}💰** — Il te reste **{new_balance}💰**."
     )
 
-    await message.channel.send(rp)
+    embed = discord.Embed(
+    description=rp,
+    color=0xC49A6C  # couleur café ☕
+)
+
+embed.set_image(url=random.choice(BARISTA_IMAGES))
+
+await message.channel.send(embed=embed)
+
 
     # Envoyer la commande dans #commandes
     orders_channel = await get_orders_channel(message.guild)
