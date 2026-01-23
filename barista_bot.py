@@ -23,9 +23,9 @@ ORDERS_CHANNEL_NAME = "🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"
 
 # Images affichées avec les réponses du barista (URLs directes)
 BARISTA_IMAGES = [
-    "https://cdn.discordapp.com/attachments/1461778523793527014/1462055474676502704/download_5.jpg",
-    "https://cdn.discordapp.com/attachments/1461778523793527014/1462055475188334777/Im_not_going_to_greet_you_every_day..._but_since_youre_here_welcome__Dont_think_I_made_this_coffee_just_for_you_got_it____art_by_mikitkafull___art_oc_tsundere_barista_animeart_digitalart_character.jpg",
-    "https://media.discordapp.net/attachments/1461778523793527014/1462055475968213149/download_4.jpg",
+    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232376875520053/image.png?ex=69746098&is=69730f18&hm=799962548d319a74d040e32a4a0a30dd0816eb7969c13ff7333faef4b1580dc9&",
+    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232400002777109/image.png?ex=6974609d&is=69730f1d&hm=304bcc0d96568cfc9b7f3b08f53ea2d9c55b2bb16ff719c17b9431e43b43dff0&",
+    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232447041896488/image.png?ex=697460a8&is=69730f28&hm=25ee1806f6499967ede4f885a4cc665b6fed8ca1a9bf16c3602ea90c62b9455a&",
 ]
 
 # ----------------- SYSTEME ARGENT RP -----------------
