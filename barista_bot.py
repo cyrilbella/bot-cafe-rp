@@ -1,6 +1,5 @@
 import os
 import re
-import random
 import json
 from dataclasses import dataclass
 from typing import Optional
@@ -21,12 +20,33 @@ ALLOWED_CHANNELS = {"🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"}  # Mets
 # Salon où le bot envoie les commandes (nom EXACT)
 ORDERS_CHANNEL_NAME = "🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"
 
-# Images affichées avec les réponses du barista (URLs directes)
-BARISTA_IMAGES = [
-    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232376875520053/image.png?ex=69746098&is=69730f18&hm=799962548d319a74d040e32a4a0a30dd0816eb7969c13ff7333faef4b1580dc9&",
-    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232400002777109/image.png?ex=6974609d&is=69730f1d&hm=304bcc0d96568cfc9b7f3b08f53ea2d9c55b2bb16ff719c17b9431e43b43dff0&",
-    "https://cdn.discordapp.com/attachments/1463232375487070415/1463232447041896488/image.png?ex=697460a8&is=69730f28&hm=25ee1806f6499967ede4f885a4cc665b6fed8ca1a9bf16c3602ea90c62b9455a&",
-]
+# ----------------- TEXTES RP (FIXES) -----------------
+WELCOME_TEXT = (
+    "Derrière le comptoir, la barista ajuste son tablier, un sourire chaleureux aux lèvres tandis que l’odeur du café fraîchement moulu emplit l’air. "
+    "<:33465brownribbon:1463820318329143296>\n"
+    "« Bonjour et bienvenue au Galop Gourmand !  <:image1:1463626069629210808>  Que puis-je vous servir aujourd’hui ? »"
+)
+
+CHECKOUT_TEXT = (
+    "Elle pianote doucement sur la caisse, jette un coup d’œil à l’écran avant de relever la tête. "
+    "<:18706whitestar:1463819220759347231>\n"
+    "« Parfait ! Cela vous fera un total de **{total}💰** <:7863symboldollarsign:1463822083481014303> . "
+    "<:20698brownspiral2:1463624287025107169>\n"
+    "Après règlement, il vous restera **{balance}💰** <:7863symboldollarsign:1463822083481014303> sur votre compte. »"
+)
+
+GOODBYE_TEXT = (
+    "Elle tend la commande avec soin et un clin d’œil complice. "
+    "<:54936emptybox:1463625944102342810>\n"
+    "« Nous vous souhaitons une excellente dégustation ! <:Pancakes:1463615869979459851>\n"
+    "À très bientôt au Galop Gourmand ! <:image1:1463626069629210808> <:31461caffelatte:1463624366465093774> »"
+)
+
+# ----------------- IMAGES PAR SITUATION (URL DIRECTES) -----------------
+# Remplace ces 3 liens par VOS images exactes
+WELCOME_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232376875520053/image.png?ex=69746098&is=69730f18&hm=799962548d319a74d040e32a4a0a30dd0816eb7969c13ff7333faef4b1580dc9&"
+CHECKOUT_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232400002777109/image.png?ex=6974609d&is=69730f1d&hm=304bcc0d96568cfc9b7f3b08f53ea2d9c55b2bb16ff719c17b9431e43b43dff0&"
+GOODBYE_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232447041896488/image.png?ex=697460a8&is=69730f28&hm=25ee1806f6499967ede4f885a4cc665b6fed8ca1a9bf16c3602ea90c62b9455a&"
 
 # ----------------- SYSTEME ARGENT RP -----------------
 MONEY_FILE = "money.json"
@@ -108,19 +128,6 @@ FOOD_KEYWORDS = {
 }
 
 SIZES = ["petit", "moyen", "grand"]
-
-RP_OPENERS = [
-    "☕ *Le barista relève la tête avec un sourire.*",
-    "🍰 *Un petit tintement de tasse se fait entendre.*",
-    "✨ *Le barista s'approche du comptoir, attentif.*",
-]
-
-RP_ACKS = [
-    "Bien sûr !",
-    "Avec plaisir !",
-    "Tout de suite !",
-    "Entendu !",
-]
 
 
 def normalize(text: str) -> str:
@@ -210,7 +217,6 @@ def needs_clarification(order: ParsedOrder) -> Optional[str]:
 # ----------------- DISCORD BOT -----------------
 intents = discord.Intents.default()
 intents.message_content = True
-
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
@@ -259,22 +265,19 @@ async def on_message(message: discord.Message):
         return
 
     order = parse_order(content)
+
+    # Situation 1 : Accueil
     if not order:
         if any(w in normalize(content) for w in ["bonjour", "salut", "coucou", "hello"]):
-            # Petit message RP + image
-            embed = discord.Embed(
-                description=f"{random.choice(RP_OPENERS)} {random.choice(RP_ACKS)} Qu’est-ce que je te sers ?"
-            )
-            if BARISTA_IMAGES:
-                embed.set_image(url=random.choice(BARISTA_IMAGES))
+            embed = discord.Embed(description=WELCOME_TEXT)
+            embed.set_image(url=WELCOME_IMAGE)
             await message.channel.send(embed=embed)
         return
 
     clarification = needs_clarification(order)
     if clarification:
-        embed = discord.Embed(description=f"{random.choice(RP_OPENERS)} {clarification}")
-        if BARISTA_IMAGES:
-            embed.set_image(url=random.choice(BARISTA_IMAGES))
+        embed = discord.Embed(description=clarification)
+        embed.set_image(url=WELCOME_IMAGE)
         await message.channel.send(embed=embed)
         return
 
@@ -286,19 +289,17 @@ async def on_message(message: discord.Message):
     if total_price > 0 and balance < total_price:
         embed = discord.Embed(
             description=(
-                f"❌ *Le barista secoue la tête.* Désolé, ça coûte **{total_price}💰**, "
-                f"mais tu n’as que **{balance}💰**."
+                f"❌ Vous n’avez pas assez d’argent. Total: **{total_price}💰**, "
+                f"Solde: **{balance}💰**."
             )
         )
-        if BARISTA_IMAGES:
-            embed.set_image(url=random.choice(BARISTA_IMAGES))
+        embed.set_image(url=CHECKOUT_IMAGE)
         await message.channel.send(embed=embed)
         return
 
     if total_price > 0:
         remove_money(message.author.id, total_price)
 
-    # Construire texte RP
     item_str = pretty_item(order.item)
     parts = [f"**{order.quantity}× {item_str}**"]
     if order.size:
@@ -306,17 +307,17 @@ async def on_message(message: discord.Message):
 
     new_balance = get_balance(message.author.id)
 
-    rp_text = (
-        f"{random.choice(RP_OPENERS)} {random.choice(RP_ACKS)} "
-        f"Ça marche, je te prépare {', '.join(parts)} ☕\n"
-        f"💰 Total: **{total_price}💰** — Il te reste **{new_balance}💰**."
+    # Situation 2 : Passage en caisse
+    embed_checkout = discord.Embed(
+        description=CHECKOUT_TEXT.format(total=total_price, balance=new_balance)
     )
+    embed_checkout.set_image(url=CHECKOUT_IMAGE)
+    await message.channel.send(embed=embed_checkout)
 
-    # Réponse avec image (embed)
-    embed = discord.Embed(description=rp_text)
-    if BARISTA_IMAGES:
-        embed.set_image(url=random.choice(BARISTA_IMAGES))
-    await message.channel.send(embed=embed)
+    # Situation 3 : Au revoir / Dégustation
+    embed_goodbye = discord.Embed(description=GOODBYE_TEXT)
+    embed_goodbye.set_image(url=GOODBYE_IMAGE)
+    await message.channel.send(embed=embed_goodbye)
 
     # Envoi dans le salon commandes
     await post_order_to_channel(message, parts, total_price)
