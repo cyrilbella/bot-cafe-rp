@@ -162,7 +162,7 @@ def remove_money(user_id: int, amount: int) -> bool:
 
 
 # ----------------- MENU + DETECTION -----------------
-DDRINK_KEYWORDS = {
+DRINK_KEYWORDS = {
     # ☕ Café & dérivés (chaud)
     "espresso": ["expresso", "espresso", "café expresso", "cafe expresso"],
     "cafe_allonge": ["café allongé", "cafe allonge", "allongé", "allonge"],
@@ -487,3 +487,4 @@ if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("DISCORD_TOKEN manquant. Mets-le dans Railway > Variables (clé DISCORD_TOKEN).")
     bot.run(TOKEN)
+
