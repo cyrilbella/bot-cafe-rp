@@ -53,19 +53,73 @@ MONEY_FILE = "money.json"
 START_MONEY = 20  # argent de départ
 
 PRICES = {
-    "espresso": 3,
-    "cafe": 3,
-    "cappuccino": 4,
-    "latte": 5,
-    "mocha": 5,
-    "chocolat_chaud": 4,
-    "the": 3,
-    "matcha": 5,
-    "croissant": 2,
-    "pain_au_chocolat": 2,
-    "cookie": 2,
-    "muffin": 3,
-    "part_de_gateau": 4,
+    # 🍰 Pâtisseries & Viennoiseries
+    "macaron": 1.5,
+    "cinnamon_roll": 3.5,
+    "croissant": 1.2,
+    "pain_au_chocolat": 1.3,
+    "brioche": 1.8,
+
+    # 🍮 Desserts individuels
+    "panna_cotta": 3.5,
+    "muffin": 2.8,
+    "donut": 2.5,
+    "roule_japonais": 4.2,
+    "cookie": 2.2,
+
+    # 🥞 Crêpes & Gaufres
+    "crepe_nature": 2.0,
+    "crepe_garnie": 3.0,
+    "gaufre_nature": 2.5,
+    "gaufre_garnie": 3.0,
+
+    # 🍧 Cheesecakes, Brownies & Éclairs
+    "cheesecake": 4.5,
+    "brownie": 2.5,
+    "eclair": 3.0,
+
+    # 🍩 Beignets & Gâteaux
+    "beignet": 2.0,
+    "gateau_part": 4.0,
+
+    # 🥧 Tartes
+    "tarte_part": 3.8,
+
+    # 🍞 Toasts & Salés
+    "toast_sucre": 3.0,
+    "toast_avocat_saumon": 6.5,
+    "toast_avocat_crevette": 6.8,
+
+    # 🥞 Pancakes
+    "pancakes": 3.8,
+
+    # ☕ Café & dérivés (chaud)
+    "espresso": 2.0,
+    "cafe_allonge": 2.2,
+    "americano": 2.5,
+    "cafe_creme": 2.8,
+    "cappuccino": 3.5,
+    "chocolat_chaud": 3.8,
+    "moka_blanc": 4.2,
+    "matcha_latte": 4.5,
+    "macchiato": 3.2,
+    "caramel_latte": 4.2,
+    "vanille_latte": 4.2,
+    "latte_lavande": 4.5,
+    "latte_speculoos": 4.5,
+
+    # 🍵 Thés & infusions
+    "the": 2.8,
+
+    # 🧊 Boissons froides
+    "milkshake": 4.5,
+    "coca_cola": 2.5,
+    "mojito_sans_alcool": 4.0,
+    "bubble_tea": 4.9,
+    "refreshing": 3.8,
+    "mimi_matcha": 5.0,
+    "jus_de_fruit": 3.5,
+    "ice_tea_maison": 3.5,
 }
 
 
@@ -108,23 +162,68 @@ def remove_money(user_id: int, amount: int) -> bool:
 
 
 # ----------------- MENU + DETECTION -----------------
-DRINK_KEYWORDS = {
-    "espresso": ["espresso", "expresso"],
-    "cafe": ["café", "cafe", "noir", "allongé", "americano"],
+DDRINK_KEYWORDS = {
+    # ☕ Café & dérivés (chaud)
+    "espresso": ["expresso", "espresso", "café expresso", "cafe expresso"],
+    "cafe_allonge": ["café allongé", "cafe allonge", "allongé", "allonge"],
+    "americano": ["américano", "americano"],
+    "cafe_creme": ["café crème", "cafe creme", "creme"],
     "cappuccino": ["cappuccino", "cappu"],
-    "latte": ["latte", "café latte", "cafe latte"],
-    "mocha": ["mocha", "mokka"],
     "chocolat_chaud": ["chocolat chaud", "choco chaud"],
+    "moka_blanc": ["moka blanc", "mocha blanc"],
+    "matcha_latte": ["matcha latté", "matcha latte", "latte matcha"],
+    "macchiato": ["macchiato"],
+    "caramel_latte": ["caramel latté", "caramel latte", "latte caramel"],
+    "vanille_latte": ["vanille latté", "vanille latte", "latte vanille"],
+    "latte_lavande": ["latté lavande", "latte lavande", "lavande latte"],
+    "latte_speculoos": ["latté spéculoos", "latte speculoos", "latte spéculoos", "speculoos latte"],
+
+    # 🍵 Thés & infusions
     "the": ["thé", "the", "infusion", "tisane"],
-    "matcha": ["matcha"],
+
+    # 🧊 Boissons froides
+    "milkshake": ["milkshake", "milk shake"],
+    "coca_cola": ["coca-cola", "coca cola", "coca"],
+    "mojito_sans_alcool": ["mojito sans alcool", "mojito (sans alcool)", "mojito"],
+    "bubble_tea": ["bubble tea", "bubbletea", "boba"],
+    "refreshing": ["refreshing", "boisson rafraîchissante", "boisson rafraichissante", "rafraîchissante maison", "rafraichissante maison"],
+    "mimi_matcha": ["mimi matcha"],
+    "jus_de_fruit": ["jus de fruit", "jus", "jus d'orange", "jus de pomme"],
+    "ice_tea_maison": ["ice tea", "ice tea maison", "thé glacé", "the glace", "iced tea"],
 }
 
 FOOD_KEYWORDS = {
+    "macaron": ["macaron", "macarons"],
+    "cinnamon_roll": ["cinnamon roll", "cinnamon rolls", "roule a la cannelle"],
     "croissant": ["croissant"],
     "pain_au_chocolat": ["pain au chocolat", "chocolatine"],
-    "cookie": ["cookie", "biscuit"],
-    "muffin": ["muffin"],
-    "part_de_gateau": ["gâteau", "gateau", "part", "slice"],
+    "brioche": ["brioche", "tranche de brioche"],
+
+    "panna_cotta": ["panna cotta"],
+    "muffin": ["muffin", "muffins"],
+    "donut": ["donut", "donuts"],
+    "roule_japonais": ["roulé japonais", "roule japonais"],
+    "cookie": ["cookie", "cookies"],
+
+    "crepe_nature": ["crêpe nature", "crepe nature"],
+    "crepe_garnie": ["crêpe nutella", "crêpe caramel", "crêpe confiture", "crêpe chantilly"],
+    "gaufre_nature": ["gaufre nature"],
+    "gaufre_garnie": ["gaufre nutella", "gaufre caramel", "gaufre confiture", "gaufre chantilly"],
+
+    "cheesecake": ["cheesecake"],
+    "brownie": ["brownie"],
+    "eclair": ["éclair", "eclairs", "eclair"],
+
+    "beignet": ["beignet", "beignets"],
+    "gateau_part": ["part de gâteau", "gateau", "gâteau"],
+
+    "tarte_part": ["tarte", "part de tarte"],
+
+    "toast_sucre": ["toast sucré", "toast nutella", "toast caramel", "toast confiture"],
+    "toast_avocat_saumon": ["toast avocat saumon"],
+    "toast_avocat_crevette": ["toast avocat crevette"],
+
+    "pancakes": ["pancake", "pancakes"],
 }
 
 SIZES = ["petit", "moyen", "grand"]
@@ -170,19 +269,53 @@ def find_size(text: str) -> Optional[str]:
 
 def pretty_item(item: str) -> str:
     mapping = {
-        "espresso": "espresso",
-        "cafe": "café",
-        "cappuccino": "cappuccino",
-        "latte": "latte",
-        "mocha": "mocha",
-        "chocolat_chaud": "chocolat chaud",
-        "the": "thé",
-        "matcha": "matcha",
+        "macaron": "macaron",
+        "cinnamon_roll": "cinnamon roll",
         "croissant": "croissant",
         "pain_au_chocolat": "pain au chocolat",
-        "cookie": "cookie",
+        "brioche": "tranche de brioche",
+        "panna_cotta": "panna cotta",
         "muffin": "muffin",
-        "part_de_gateau": "part de gâteau",
+        "donut": "donut",
+        "roule_japonais": "roulé japonais",
+        "cookie": "cookie",
+        "crepe_nature": "crêpe nature",
+        "crepe_garnie": "crêpe garnie",
+        "gaufre_nature": "gaufre nature",
+        "gaufre_garnie": "gaufre garnie",
+        "cheesecake": "cheesecake",
+        "brownie": "brownie",
+        "eclair": "éclair",
+        "beignet": "beignet",
+        "gateau_part": "part de gâteau",
+        "tarte_part": "part de tarte",
+        "toast_sucre": "toast sucré",
+        "toast_avocat_saumon": "toast avocat saumon",
+        "toast_avocat_crevette": "toast avocat crevette",
+        "pancakes": "portion de pancakes",
+        "espresso": "café expresso",
+        "cafe_allonge": "café allongé",
+        "americano": "américano",
+        "cafe_creme": "café crème",
+        "cappuccino": "cappuccino",
+        "chocolat_chaud": "chocolat chaud",
+        "moka_blanc": "moka blanc",
+        "matcha_latte": "matcha latté",
+        "macchiato": "macchiato",
+        "caramel_latte": "caramel latté",
+        "vanille_latte": "vanille latté",
+        "latte_lavande": "latté lavande",
+        "latte_speculoos": "latté spéculoos",
+        "the": "thé",
+        "milkshake": "milkshake",
+        "coca_cola": "Coca-Cola",
+        "mojito_sans_alcool": "mojito (sans alcool)",
+        "bubble_tea": "bubble tea",
+        "refreshing": "Refreshing (maison)",
+        "mimi_matcha": "Mimi Matcha (signature)",
+        "jus_de_fruit": "jus de fruit",
+        "ice_tea_maison": "Ice Tea maison",
+
     }
     return mapping.get(item, item)
 
