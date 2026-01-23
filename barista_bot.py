@@ -14,8 +14,8 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 # ----------------- CONFIG -----------------
-# Salons où le bot répond (1 ou 2 noms EXACTS)
-ALLOWED_CHANNELS = {"🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"}  # Mets ici le(s) salon(s) où on parle au barista
+# Salons où le bot répond (1 ou 2 noms EXACTS) — Mets ici le salon où les gens commandent au barista
+ALLOWED_CHANNELS = {"🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"}
 
 # Salon où le bot envoie les commandes (nom EXACT)
 ORDERS_CHANNEL_NAME = "🛎️ᝰᐟ𝑪𝒐𝒎𝒎𝒂𝒏𝒅𝒆𝒔"
@@ -43,7 +43,6 @@ GOODBYE_TEXT = (
 )
 
 # ----------------- IMAGES PAR SITUATION (URL DIRECTES) -----------------
-# Remplace ces 3 liens par VOS images exactes
 WELCOME_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232376875520053/image.png?ex=69746098&is=69730f18&hm=799962548d319a74d040e32a4a0a30dd0816eb7969c13ff7333faef4b1580dc9&"
 CHECKOUT_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232400002777109/image.png?ex=6974609d&is=69730f1d&hm=304bcc0d96568cfc9b7f3b08f53ea2d9c55b2bb16ff719c17b9431e43b43dff0&"
 GOODBYE_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463232447041896488/image.png?ex=697460a8&is=69730f28&hm=25ee1806f6499967ede4f885a4cc665b6fed8ca1a9bf16c3602ea90c62b9455a&"
@@ -52,6 +51,7 @@ GOODBYE_IMAGE = "https://cdn.discordapp.com/attachments/1463232375487070415/1463
 MONEY_FILE = "money.json"
 START_MONEY = 20  # argent de départ
 
+# Prix (💰 = € dans ton RP, avec décimales possibles)
 PRICES = {
     # 🍰 Pâtisseries & Viennoiseries
     "macaron": 1.5,
@@ -138,25 +138,25 @@ def save_money(data):
 money_data = load_money()
 
 
-def get_balance(user_id: int) -> int:
+def get_balance(user_id: int) -> float:
     uid = str(user_id)
     if uid not in money_data:
         money_data[uid] = START_MONEY
         save_money(money_data)
-    return int(money_data[uid])
+    return float(money_data[uid])
 
 
-def add_money(user_id: int, amount: int):
+def add_money(user_id: int, amount: float):
     uid = str(user_id)
-    money_data[uid] = get_balance(user_id) + amount
+    money_data[uid] = get_balance(user_id) + float(amount)
     save_money(money_data)
 
 
-def remove_money(user_id: int, amount: int) -> bool:
+def remove_money(user_id: int, amount: float) -> bool:
     uid = str(user_id)
-    if get_balance(user_id) < amount:
+    if get_balance(user_id) < float(amount):
         return False
-    money_data[uid] = get_balance(user_id) - amount
+    money_data[uid] = get_balance(user_id) - float(amount)
     save_money(money_data)
     return True
 
@@ -186,7 +186,13 @@ DRINK_KEYWORDS = {
     "coca_cola": ["coca-cola", "coca cola", "coca"],
     "mojito_sans_alcool": ["mojito sans alcool", "mojito (sans alcool)", "mojito"],
     "bubble_tea": ["bubble tea", "bubbletea", "boba"],
-    "refreshing": ["refreshing", "boisson rafraîchissante", "boisson rafraichissante", "rafraîchissante maison", "rafraichissante maison"],
+    "refreshing": [
+        "refreshing",
+        "boisson rafraîchissante",
+        "boisson rafraichissante",
+        "rafraîchissante maison",
+        "rafraichissante maison",
+    ],
     "mimi_matcha": ["mimi matcha"],
     "jus_de_fruit": ["jus de fruit", "jus", "jus d'orange", "jus de pomme"],
     "ice_tea_maison": ["ice tea", "ice tea maison", "thé glacé", "the glace", "iced tea"],
@@ -194,7 +200,7 @@ DRINK_KEYWORDS = {
 
 FOOD_KEYWORDS = {
     "macaron": ["macaron", "macarons"],
-    "cinnamon_roll": ["cinnamon roll", "cinnamon rolls", "roule a la cannelle"],
+    "cinnamon_roll": ["cinnamon roll", "cinnamon rolls", "roule a la cannelle", "roulé à la cannelle"],
     "croissant": ["croissant"],
     "pain_au_chocolat": ["pain au chocolat", "chocolatine"],
     "brioche": ["brioche", "tranche de brioche"],
@@ -206,7 +212,8 @@ FOOD_KEYWORDS = {
     "cookie": ["cookie", "cookies"],
 
     "crepe_nature": ["crêpe nature", "crepe nature"],
-    "crepe_garnie": ["crêpe nutella", "crêpe caramel", "crêpe confiture", "crêpe chantilly"],
+    "crepe_garnie": ["crêpe nutella", "crêpe caramel", "crêpe confiture", "crêpe chantilly",
+                     "crepe nutella", "crepe caramel", "crepe confiture", "crepe chantilly"],
     "gaufre_nature": ["gaufre nature"],
     "gaufre_garnie": ["gaufre nutella", "gaufre caramel", "gaufre confiture", "gaufre chantilly"],
 
@@ -215,60 +222,115 @@ FOOD_KEYWORDS = {
     "eclair": ["éclair", "eclairs", "eclair"],
 
     "beignet": ["beignet", "beignets"],
-    "gateau_part": ["part de gâteau", "gateau", "gâteau"],
+    "gateau_part": ["part de gâteau", "part de gateau", "gateau", "gâteau"],
 
     "tarte_part": ["tarte", "part de tarte"],
 
-    "toast_sucre": ["toast sucré", "toast nutella", "toast caramel", "toast confiture"],
+    "toast_sucre": ["toast sucré", "toast sucre", "toast nutella", "toast caramel", "toast confiture"],
     "toast_avocat_saumon": ["toast avocat saumon"],
     "toast_avocat_crevette": ["toast avocat crevette"],
 
     "pancakes": ["pancake", "pancakes"],
 }
 
-SIZES = ["petit", "moyen", "grand"]
-
 
 def normalize(text: str) -> str:
     return text.lower().strip()
 
 
-def find_item(text: str) -> Optional[str]:
-    t = normalize(text)
-    for item, keys in DRINK_KEYWORDS.items():
-        if any(k in t for k in keys):
-            return item
-    for item, keys in FOOD_KEYWORDS.items():
-        if any(k in t for k in keys):
-            return item
-    return None
+@dataclass
+class OrderLine:
+    item: str
+    quantity: int
 
 
-def find_quantity(text: str) -> int:
-    t = normalize(text)
-    m = re.search(r"\b(\d{1,2})\b", t)
+NUMBER_WORDS = {
+    "un": 1, "une": 1,
+    "deux": 2,
+    "trois": 3,
+    "quatre": 4,
+    "cinq": 5,
+    "six": 6,
+    "sept": 7,
+    "huit": 8,
+    "neuf": 9,
+    "dix": 10,
+}
+
+
+def _extract_qty_before(text: str, start_index: int) -> int:
+    """
+    Cherche une quantité juste avant un item.
+    Ex: "2 cookies" => 2 ; "deux cookies" => 2 ; sinon 1.
+    """
+    left = text[:start_index].lower()
+    window = left[-25:]
+
+    m = re.search(r"(\d{1,2})\s*$", window)
     if m:
         q = int(m.group(1))
         return max(1, min(q, 20))
-    if "deux" in t:
-        return 2
-    if "trois" in t:
-        return 3
+
+    for w, n in NUMBER_WORDS.items():
+        if re.search(rf"\b{re.escape(w)}\b\s*$", window):
+            return n
+
     return 1
 
 
-def find_size(text: str) -> Optional[str]:
+def parse_orders(text: str) -> list[OrderLine]:
+    """
+    Retourne une liste d'items trouvés dans le message.
+    Ex: "2 donuts et 1 cappuccino" => [donut x2, cappuccino x1]
+    """
     t = normalize(text)
-    for s in SIZES:
-        if s in t:
-            return s
-    if "xl" in t or "très grand" in t:
-        return "grand"
-    return None
+
+    aliases: list[tuple[str, str]] = []
+    for item, keys in DRINK_KEYWORDS.items():
+        for k in keys:
+            aliases.append((normalize(k), item))
+    for item, keys in FOOD_KEYWORDS.items():
+        for k in keys:
+            aliases.append((normalize(k), item))
+
+    aliases.sort(key=lambda x: len(x[0]), reverse=True)
+
+    found: list[tuple[int, int, str]] = []
+    used_ranges: list[tuple[int, int]] = []
+
+    def overlaps(a, b):
+        return not (a[1] <= b[0] or b[1] <= a[0])
+
+    for phrase, item in aliases:
+        start = 0
+        while True:
+            idx = t.find(phrase, start)
+            if idx == -1:
+                break
+            rng = (idx, idx + len(phrase))
+            if any(overlaps(rng, r) for r in used_ranges):
+                start = idx + 1
+                continue
+            found.append((rng[0], rng[1], item))
+            used_ranges.append(rng)
+            start = idx + 1
+
+    if not found:
+        return []
+
+    found.sort(key=lambda x: x[0])
+
+    counts: dict[str, int] = {}
+    for start, end, item in found:
+        q = _extract_qty_before(t, start)
+        counts[item] = counts.get(item, 0) + q
+
+    return [OrderLine(item=k, quantity=v) for k, v in counts.items()]
 
 
 def pretty_item(item: str) -> str:
     mapping = {
+        # Nourriture
         "macaron": "macaron",
         "cinnamon_roll": "cinnamon roll",
         "croissant": "croissant",
@@ -293,6 +355,7 @@ def pretty_item(item: str) -> str:
         "toast_avocat_saumon": "toast avocat saumon",
         "toast_avocat_crevette": "toast avocat crevette",
         "pancakes": "portion de pancakes",
+        # Boissons
         "espresso": "café expresso",
         "cafe_allonge": "café allongé",
         "americano": "américano",
@@ -315,36 +378,15 @@ def pretty_item(item: str) -> str:
         "mimi_matcha": "Mimi Matcha (signature)",
         "jus_de_fruit": "jus de fruit",
         "ice_tea_maison": "Ice Tea maison",
-
     }
     return mapping.get(item, item)
 
 
-@dataclass
-class ParsedOrder:
-    item: str
-    quantity: int
-    size: Optional[str] = None
-
-
-def parse_order(text: str) -> Optional[ParsedOrder]:
-    item = find_item(text)
-    if not item:
-        return None
-    q = find_quantity(text)
-    size = find_size(text)
-
-    # Pour les aliments, pas de taille
-    if item in FOOD_KEYWORDS:
-        size = None
-
-    return ParsedOrder(item=item, quantity=q, size=size)
-
-
-def needs_clarification(order: ParsedOrder) -> Optional[str]:
-    if order.item in DRINK_KEYWORDS and order.size is None:
-        return "Tu la veux en **petit**, **moyen** ou **grand** ?"
-    return None
+def fmt_money(x: float) -> str:
+    # Affiche 2 décimales si besoin, sinon entier propre
+    if abs(x - round(x)) < 1e-9:
+        return str(int(round(x)))
+    return f"{x:.2f}"
 
 
 # ----------------- DISCORD BOT -----------------
@@ -371,7 +413,7 @@ async def get_orders_channel(guild: discord.Guild) -> Optional[discord.TextChann
     return None
 
 
-async def post_order_to_channel(message: discord.Message, parts, total_price: int):
+async def post_order_to_channel(message: discord.Message, parts: list[str], total_price: float):
     orders_channel = await get_orders_channel(message.guild)
     if not orders_channel:
         return
@@ -379,7 +421,7 @@ async def post_order_to_channel(message: discord.Message, parts, total_price: in
     await orders_channel.send(
         f"🧾 **Commande** de {message.author.mention} dans {message.channel.mention} : "
         + " | ".join(parts)
-        + (f" | Total: **{total_price}💰**" if total_price > 0 else "")
+        + (f" | Total: **{fmt_money(total_price)}💰**" if total_price > 0 else "")
     )
 
 
@@ -397,33 +439,32 @@ async def on_message(message: discord.Message):
     if not content:
         return
 
-    order = parse_order(content)
+    orders = parse_orders(content)
 
     # Situation 1 : Accueil
-    if not order:
+    if not orders:
         if any(w in normalize(content) for w in ["bonjour", "salut", "coucou", "hello"]):
             embed = discord.Embed(description=WELCOME_TEXT)
             embed.set_image(url=WELCOME_IMAGE)
             await message.channel.send(embed=embed)
         return
 
-    clarification = needs_clarification(order)
-    if clarification:
-        embed = discord.Embed(description=clarification)
-        embed.set_image(url=WELCOME_IMAGE)
-        await message.channel.send(embed=embed)
-        return
+    # --- Calcul total + paiement ---
+    parts: list[str] = []
+    total_price = 0.0
 
-    # --- Calcul prix + paiement ---
-    unit_price = PRICES.get(order.item, 0)
-    total_price = unit_price * order.quantity
+    for o in orders:
+        item_str = pretty_item(o.item)
+        parts.append(f"**{o.quantity}× {item_str}**")
+        total_price += float(PRICES.get(o.item, 0.0)) * o.quantity
+
     balance = get_balance(message.author.id)
 
     if total_price > 0 and balance < total_price:
         embed = discord.Embed(
             description=(
-                f"❌ Vous n’avez pas assez d’argent. Total: **{total_price}💰**, "
-                f"Solde: **{balance}💰**."
+                f"❌ Vous n’avez pas assez d’argent. Total: **{fmt_money(total_price)}💰**, "
+                f"Solde: **{fmt_money(balance)}💰**."
             )
         )
         embed.set_image(url=CHECKOUT_IMAGE)
@@ -433,16 +474,11 @@ async def on_message(message: discord.Message):
     if total_price > 0:
         remove_money(message.author.id, total_price)
 
-    item_str = pretty_item(order.item)
-    parts = [f"**{order.quantity}× {item_str}**"]
-    if order.size:
-        parts.append(f"taille **{order.size}**")
-
     new_balance = get_balance(message.author.id)
 
     # Situation 2 : Passage en caisse
     embed_checkout = discord.Embed(
-        description=CHECKOUT_TEXT.format(total=total_price, balance=new_balance)
+        description=CHECKOUT_TEXT.format(total=fmt_money(total_price), balance=fmt_money(new_balance))
     )
     embed_checkout.set_image(url=CHECKOUT_IMAGE)
     await message.channel.send(embed=embed_checkout)
@@ -462,29 +498,28 @@ async def on_message(message: discord.Message):
 @bot.command()
 async def balance(ctx):
     bal = get_balance(ctx.author.id)
-    await ctx.send(f"💰 Tu as **{bal}💰**.")
+    await ctx.send(f"💰 Tu as **{fmt_money(bal)}💰**.")
 
 
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def give(ctx, member: discord.Member, amount: int):
+async def give(ctx, member: discord.Member, amount: float):
     add_money(member.id, amount)
     await ctx.send(
-        f"💸 {member.mention} reçoit **{amount}💰** (nouveau solde: **{get_balance(member.id)}💰**)."
+        f"💸 {member.mention} reçoit **{fmt_money(amount)}💰** (nouveau solde: **{fmt_money(get_balance(member.id))}💰**)."
     )
 
 
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def setmoney(ctx, member: discord.Member, amount: int):
+async def setmoney(ctx, member: discord.Member, amount: float):
     uid = str(member.id)
-    money_data[uid] = max(0, int(amount))
+    money_data[uid] = max(0.0, float(amount))
     save_money(money_data)
-    await ctx.send(f"🧾 Solde de {member.mention} fixé à **{get_balance(member.id)}💰**.")
+    await ctx.send(f"🧾 Solde de {member.mention} fixé à **{fmt_money(get_balance(member.id))}💰**.")
 
 
 if __name__ == "__main__":
     if not TOKEN:
         raise RuntimeError("DISCORD_TOKEN manquant. Mets-le dans Railway > Variables (clé DISCORD_TOKEN).")
     bot.run(TOKEN)
-
